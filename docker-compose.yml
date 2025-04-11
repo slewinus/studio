@@ -1,3 +1,4 @@
+
 version: "3.9"
 services:
   db:
@@ -8,7 +9,7 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: dbname
+      POSTGRES_DB: db-postgress
     volumes:
       - db_data:/var/lib/postgresql/data
 
