@@ -1,3 +1,4 @@
+'use client';
 
 import {AnalyzeMessageSecurityOutput, analyzeMessageSecurity} from '@/ai/flows/analyze-message-security';
 import {summarizeMessageThread, SummarizeMessageThreadOutput} from '@/ai/flows/summarize-message-thread';
@@ -20,8 +21,9 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import {Textarea} from '@/components/ui/textarea';
-import {Toaster, useToast} from '@/components/ui/toaster';
+import {Toaster} from '@/components/ui/toaster';
 import {useEffect, useRef, useState} from 'react';
+import {useToast} from "@/hooks/use-toast";
 
 function Message({message, isSent}: { message: string, isSent: boolean }) {
   return (
