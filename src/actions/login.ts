@@ -1,3 +1,5 @@
+'use server';
+
 import * as z from 'zod';
 import {LoginSchema} from '@/schemas';
 import {db} from '@/lib/db';
@@ -23,14 +25,21 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     });
   } catch (error) {
     if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return {error: 'Invalid credentials!'};
-        default:
-          return {error: 'Something went wrong!'};
+      // Check if error and error.type exists before proceeding
+      if (error && error.type) {
+        switch (error.type) {
+          case 'CredentialsSignin':
+            return {error: 'Invalid credentials!'};
+          default:
+            return {error: 'Something went wrong!'};
+        }
+      } else {
+        // Handle the case where error or error.type is undefined
+        return {error: 'An unexpected error occurred during login.'};
       }
     }
 
     throw error;
   }
 };
+
