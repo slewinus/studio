@@ -9,7 +9,7 @@ import {NextResponse} from 'next/server';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const {email, password, name} = RegisterSchema.parse(body);
+    const {email, password, name, role} = RegisterSchema.parse(body);
 
     const existingUser = await db.user.findUnique({
       where: {
@@ -28,11 +28,12 @@ export async function POST(req: Request) {
         name,
         email,
         password: hashedPassword,
+        role,
       },
     });
 
     return NextResponse.json(
-      {user: {email: user.email, name: user.name}},
+      {user: {email: user.email, name: user.name, role: user.role}},
       {status: 200}
     );
   } catch (error) {

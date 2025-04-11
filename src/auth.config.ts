@@ -28,8 +28,33 @@ export default {
 
         const passwordsMatch = await bcrypt.compare(password, user.password);
 
-        if (passwordsMatch) return user;
+        if (passwordsMatch) return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        };
       },
     }),
   ],
+  callbacks: {
+    async session({session, token}) {
+      if (token && token.role) {
+        session.user.role = token.role as "ADMIN" | "USER";
+      }
+      return session;
+    },
+    async jwt({token}) {
+      const userByEmail = await db.user.findUnique({
+        where: {
+          email: token.email
+        }
+      });
+
+      if (userByEmail) {
+        token.role = userByEmail.role;
+      }
+      return token;
+    }
+  },
 } satisfies NextAuthConfig;

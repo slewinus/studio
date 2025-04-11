@@ -26,6 +26,8 @@ import {useEffect, useRef, useState} from 'react';
 import {useToast} from "@/hooks/use-toast";
 import {useRouter} from 'next/navigation';
 import Link from 'next/link';
+import {useSession} from "next-auth/react";
+import {SessionProvider} from 'next-auth/react';
 
 function Message({message, isSent}: { message: string, isSent: boolean }) {
   return (
@@ -43,7 +45,8 @@ export default function Home() {
   const {toast} = useToast();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messageContainerRef = useRef<HTMLDivElement>(null);
-    const router = useRouter();
+  const router = useRouter();
+  const {data: session} = useSession();
 
   useEffect(() => {
     if (analysis) {
@@ -111,94 +114,95 @@ export default function Home() {
     }
   };
 
-  // Replace this with your actual authentication check
-  const isAuthenticated = false;
-
   return (
-    <SidebarProvider>
-      <div className="flex h-screen antialiased text-foreground">
-        <Sidebar className="bg-secondary border-r">
-          <SidebarHeader>
-            <SidebarTrigger/>
-            <Input placeholder="Search..."/>
-          </SidebarHeader>
-          <SidebarContent>
-            <SidebarGroup>
-              <SidebarGroupLabel>Chats</SidebarGroupLabel>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton>General</SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton>Random</SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroup>
-            <SidebarSeparator/>
-            <SidebarGroup>
-              <SidebarGroupLabel>Settings</SidebarGroupLabel>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton>Profile</SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton>Account</SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroup>
-          </SidebarContent>
-          <SidebarFooter>
-            <p className="text-xs text-muted-foreground">
-              Made with ❤️ by Firebase Studio
-            </p>
-          </SidebarFooter>
-        </Sidebar>
+    <SessionProvider>
+      <SidebarProvider>
+        <div className="flex h-screen antialiased text-foreground">
+          <Sidebar className="bg-secondary border-r">
+            <SidebarHeader>
+              <SidebarTrigger/>
+              <Input placeholder="Search..."/>
+            </SidebarHeader>
+            <SidebarContent>
+              <SidebarGroup>
+                <SidebarGroupLabel>Chats</SidebarGroupLabel>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton>General</SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton>Random</SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroup>
+              <SidebarSeparator/>
+              <SidebarGroup>
+                <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton onClick={() => router.push('/profile')}>Profile</SidebarMenuButton>
+                  </SidebarMenuItem>
+                  {session?.user?.role === 'ADMIN' && (
+                    <SidebarMenuItem>
+                      <SidebarMenuButton onClick={() => router.push('/admin')}>Admin Panel</SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )}
+                </SidebarMenu>
+              </SidebarGroup>
+            </SidebarContent>
+            <SidebarFooter>
+              <p className="text-xs text-muted-foreground">
+                Made with ❤️ by Firebase Studio
+              </p>
+            </SidebarFooter>
+          </Sidebar>
 
-        <div className="flex flex-col flex-1 p-4 space-y-4">
-          <Card className="h-full">
-            <CardHeader>
-              <CardTitle>Cryptic Messenger</CardTitle>
-              <CardDescription>Secure messaging with AI-powered security analysis</CardDescription>
-            </CardHeader>
-              {isAuthenticated ? (
-                  <>
-                      <CardContent className="flex-1 overflow-y-auto" ref={messageContainerRef}>
-                          {messages.map((message, index) => (
-                              <Message key={index} message={message} isSent={true}/>
-                          ))}
-                      </CardContent>
-                      {summary && (
-                          <div className="p-4">
-                              <CardDescription>
-                                  <strong>Thread Summary:</strong> {summary.summary}
-                              </CardDescription>
-                          </div>
-                      )}
-                      <div className="p-4 flex space-x-2">
-                          <Textarea
-                              ref={textareaRef}
-                              value={newMessage}
-                              onChange={(e) => setNewMessage(e.target.value)}
-                              placeholder="Enter your message..."
-                              className="flex-1 resize-none"
-                          />
-                          <div className="flex flex-col space-y-2">
-                              <Button onClick={handleSendMessage}>Send</Button>
-                              <Button variant="secondary" onClick={handleAnalyzeMessage}>Analyze</Button>
-                          </div>
-                      </div>
-                  </>
-              ) : (
-                  <CardContent className="flex flex-col items-center justify-center">
-                      <CardDescription className="mb-4">
-                          Please <Link href="/login" className="text-primary hover:underline">login</Link> or <Link href="/register" className="text-primary hover:underline">register</Link> to use the application.
-                      </CardDescription>
-                  </CardContent>
-              )}
-          </Card>
+          <div className="flex flex-col flex-1 p-4 space-y-4">
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle>Cryptic Messenger</CardTitle>
+                <CardDescription>Secure messaging with AI-powered security analysis</CardDescription>
+              </CardHeader>
+                {session?.user ? (
+                    <>
+                        <CardContent className="flex-1 overflow-y-auto" ref={messageContainerRef}>
+                            {messages.map((message, index) => (
+                                <Message key={index} message={message} isSent={true}/>
+                            ))}
+                        </CardContent>
+                        {summary && (
+                            <div className="p-4">
+                                <CardDescription>
+                                    <strong>Thread Summary:</strong> {summary.summary}
+                                </CardDescription>
+                            </div>
+                        )}
+                        <div className="p-4 flex space-x-2">
+                            <Textarea
+                                ref={textareaRef}
+                                value={newMessage}
+                                onChange={(e) => setNewMessage(e.target.value)}
+                                placeholder="Enter your message..."
+                                className="flex-1 resize-none"
+                            />
+                            <div className="flex flex-col space-y-2">
+                                <Button onClick={handleSendMessage}>Send</Button>
+                                <Button variant="secondary" onClick={handleAnalyzeMessage}>Analyze</Button>
+                            </div>
+                        </div>
+                    </>
+                ) : (
+                    <CardContent className="flex flex-col items-center justify-center">
+                        <CardDescription className="mb-4">
+                            Please <Link href="/login" className="text-primary hover:underline">login</Link> or <Link href="/register" className="text-primary hover:underline">register</Link> to use the application.
+                        </CardDescription>
+                    </CardContent>
+                )}
+            </Card>
+          </div>
+          <Toaster/>
         </div>
-        <Toaster/>
-      </div>
-    </SidebarProvider>
+      </SidebarProvider>
+    </SessionProvider>
   );
 }

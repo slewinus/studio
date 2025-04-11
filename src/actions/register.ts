@@ -17,8 +17,8 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     return {error: 'Invalid fields!'};
   }
 
-  const {email, password, name} = validatedFields.data;
-  console.log('register - Registration validation successful. Email:', email, 'Name:', name);
+  const {email, password, name, role} = validatedFields.data;
+  console.log('register - Registration validation successful. Email:', email, 'Name:', name, 'Role:', role);
 
   try {
     console.log('register - Checking for existing user with email:', email);
@@ -43,6 +43,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
         name,
         email,
         password: hashedPassword,
+        role,
       },
     });
 
