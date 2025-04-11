@@ -9,7 +9,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {LoginSchema} from '@/schemas';
 import {z} from 'zod';
 import {useState, useTransition} from 'react';
-import {FormError, FormSuccess} from '@/components/form-error';
+import {FormError, FormSuccess} from '@/components/form-success';
 import {login} from '@/actions/login';
 
 const LoginPage = () => {
