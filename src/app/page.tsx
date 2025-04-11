@@ -27,7 +27,7 @@ import {useToast} from "@/hooks/use-toast";
 import {useRouter} from 'next/navigation';
 import Link from 'next/link';
 import {useSession} from "next-auth/react";
-import {SessionProvider} from 'next-auth/react';
+
 
 function Message({message, isSent}: { message: string, isSent: boolean }) {
   return (
@@ -115,7 +115,6 @@ export default function Home() {
   };
 
   return (
-    <SessionProvider>
       <SidebarProvider>
         <div className="flex h-screen antialiased text-foreground">
           <Sidebar className="bg-secondary border-r">
@@ -203,6 +202,5 @@ export default function Home() {
           <Toaster/>
         </div>
       </SidebarProvider>
-    </SessionProvider>
   );
 }
