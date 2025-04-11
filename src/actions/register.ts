@@ -8,19 +8,20 @@ import {DEFAULT_LOGIN_REDIRECT} from '@/routes';
 import {redirect} from 'next/navigation';
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
-  console.log('Attempting registration with values:', values);
+  console.log('register - Attempting registration with values:', values);
 
   const validatedFields = RegisterSchema.safeParse(values);
 
   if (!validatedFields.success) {
-    console.log('Registration validation failed:', validatedFields.error);
+    console.log('register - Registration validation failed:', validatedFields.error);
     return {error: 'Invalid fields!'};
   }
 
   const {email, password, name} = validatedFields.data;
-  console.log('Registration validation successful. Email:', email, 'Name:', name);
+  console.log('register - Registration validation successful. Email:', email, 'Name:', name);
 
   try {
+    console.log('register - Checking for existing user with email:', email);
     const existingUser = await db.user.findUnique({
       where: {
         email,
@@ -28,13 +29,15 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     });
 
     if (existingUser) {
-      console.log('Email already taken:', email);
+      console.log('register - Email already taken:', email);
       return {error: 'Email already taken'};
     }
 
+    console.log('register - Hashing password.');
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log('Password hashed.');
+    console.log('register - Password hashed.');
 
+    console.log('register - Creating user in database.');
     await db.user.create({
       data: {
         name,
@@ -43,10 +46,10 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
       },
     });
 
-    console.log('Registration successful!', 'redirect: /login');
-    return {success: 'Registration successful!', redirect: '/login'};
+    console.log('register - Registration successful!', 'redirect: /login');
+    return {success: 'Registration successful! Please login.', redirect: '/login'};
   } catch (error: any) {
-    console.error('Registration failed:', error);
+    console.error('register - Registration failed:', error);
     return {error: 'Failed to register user. Please try again later.'};
   }
 };
