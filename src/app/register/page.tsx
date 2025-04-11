@@ -15,7 +15,8 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {RegisterSchema} from '@/schemas';
 import {z} from 'zod';
 import {useState, useTransition} from 'react';
-import {FormError, FormSuccess} from '@/components/form-success';
+import {FormError} from '@/components/form-error';
+import {FormSuccess} from '@/components/form-success';
 import {register} from '@/actions/register';
 
 const RegisterPage = () => {
