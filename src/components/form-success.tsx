@@ -1,4 +1,4 @@
-('use client';
+'use client';
 
 import {Alert, AlertDescription} from '@/components/ui/alert';
 
@@ -17,3 +17,4 @@ export const FormSuccess = ({message}: FormSuccessProps) => {
     </Alert>
   );
 };
+
