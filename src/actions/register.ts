@@ -4,7 +4,7 @@ import * as z from 'zod';
 import {RegisterSchema} from '@/schemas';
 import {db} from '@/lib/db';
 import bcrypt from 'bcryptjs';
-import {NextResponse} from 'next/server';
+import {DEFAULT_LOGIN_REDIRECT} from '@/routes';
 
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
   const validatedFields = RegisterSchema.safeParse(values);
@@ -36,5 +36,5 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
   });
 
   // TODO: Send verification token
-  return {success: 'User created!'};
+  return {success: 'User created!', redirect: DEFAULT_LOGIN_REDIRECT};
 };
