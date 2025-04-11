@@ -29,23 +29,23 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
     });
     console.log('signIn successful, redirecting');
   } catch (error) {
-    console.error('signIn error:', error);
-    if (error instanceof AuthError) {
-      if (error && error.type) {
-        switch (error.type) {
-          case 'CredentialsSignin':
-            console.log('Invalid credentials error');
-            return {error: 'Invalid credentials!'};
-          default:
-            console.log('Generic authentication error');
-            return {error: 'Something went wrong!'};
-        }
-      } else {
-        console.log('Unexpected error during login.');
-        return {error: 'An unexpected error occurred during login.'};
+    console.error('signIn error:', error);    
+    if (error) {
+      if (error instanceof AuthError) {
+          if (error.type) {
+            switch (error.type) {
+              case 'CredentialsSignin':
+                console.log('Invalid credentials error');
+                return { error: 'Invalid credentials!' };
+              default:
+                console.log('Generic authentication error');
+                return { error: 'Something went wrong!' };
+            }
+          }
+      } else { 
+            return {error: 'An unexpected error occurred during login.'};
       }
     }
-
     throw error;
   }
 };
